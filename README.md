@@ -9,7 +9,7 @@ The identification of interactions between candidate antibodies and target antig
 
 ## Overview of DeepInterAware
 
-![Our pipeline](assess/framework-17218714586314.png)
+![Our pipeline](figs/framework.png)
 
 ## Table of Contents
 - [Overview](#overview)
