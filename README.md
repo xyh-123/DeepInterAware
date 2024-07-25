@@ -30,7 +30,7 @@ pip install -r requirements.txt
 ```
 
 ## Data
-The Antigen-Antibody data is in the `data` folder.
+The Antigen-Antibody data is in the `data` folder, the process data can be downloaded in this [link](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view?usp=sharing).
 * `data/AVIDa_hIL6/ab_ag_pair.csv` is the paired Ab-Ag data of AVIDa_hIL6 dataset.
 * `data/SAbDAb/ab_ag_pair.csv` is the paired Ab-Ag data of SAbDAb dataset.
 * `data/HIV/ab_ag_pair.csv` is the all paired Ab-Ag data of HIV dataset.
@@ -44,7 +44,7 @@ To extract the CDR loops ,please run,
 python cdr_extract.py --data_path ./data/SAbDab/
 ```
 
-Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . To extract the amino acid feature,please run,
+Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . To extract the amino acid feature, please run,
 
 ```python
 python feature_encodr.py --data_path ./data/SAbDab
@@ -54,10 +54,10 @@ python feature_encodr.py --data_path ./data/SAbDab
 
 To train DeepInterAware on antigen-antibody tasks, please run
 ```
-python main.py --config=configs/train.yml --dataset SAbDAb --kfold
-python main.py --config=configs/train.yml --dataset HIV --unseen_task unseen
-python main.py --config=configs/train.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
-python transfer.py  --config=configs/train.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
+python main.py --config=configs/SAbDAb.yml --dataset SAbDAb --kfold
+python main.py --config=configs/HIV.yml --dataset HIV --unseen_task unseen
+python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
+python transfer.py  --config=configs/train.yml --dataset CoVAbDab --unseen_task tran
 ```
 
 ## Calculate Binding sites and Binding pairs
