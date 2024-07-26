@@ -30,7 +30,10 @@ pip install -r requirements.txt
 ```
 
 ## Data
+The AVIDa-hIL6 data are available at [link](https://cognanous.com/datasets/avida-hil6). The SAbDab data are available at [link](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab). The HIV data are available from CATNAP at [link](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp). The SARS-CoV-2 data are available from CoVAbDab at [link](http://opig.stats.ox.ac.uk/webapps/covabdab/). 
+
 The Antigen-Antibody data is in the `data` folder, the process data can be downloaded in this [link](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view?usp=sharing).
+
 * `data/AVIDa_hIL6/ab_ag_pair.csv` is the paired Ab-Ag data of AVIDa_hIL6 dataset.
 * `data/SAbDAb/ab_ag_pair.csv` is the paired Ab-Ag data of SAbDAb dataset.
 * `data/HIV/ab_ag_pair.csv` is the all paired Ab-Ag data of HIV dataset.
@@ -57,7 +60,7 @@ To train DeepInterAware on antigen-antibody tasks, please run
 python main.py --config=configs/SAbDAb.yml --dataset SAbDAb --kfold
 python main.py --config=configs/HIV.yml --dataset HIV --unseen_task unseen
 python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
-python transfer.py  --config=configs/train.yml --dataset CoVAbDab --unseen_task tran
+python transfer.py  --config=configs/HIV.yml --unseen_task transfer
 ```
 
 ## Calculate Binding sites and Binding pairs
@@ -105,6 +108,7 @@ Download the checkpoint of DeepInterAware and modify the paths in the code.
 | Checkpoint on SAbDab     | [link](https://figshare.com/ndownloader/files/44970310) |
 | Checkpoint on AVIDa-hIL6 | [link](https://figshare.com/ndownloader/files/44970310) |
 | Checkpoint on HIV Unseen | [link](https://figshare.com/ndownloader/files/45053224) |
+| Checkpoint on CoVAbDab   | [link](https://figshare.com/ndownloader/files/45053224) |
 
 To test DeepInterAware on SAbDab test data, please run
 
@@ -163,6 +167,17 @@ Antigen attention map
 Antibody attention map
 
 ![Our pipeline](figs/6i9i_ab.png)
+
+### Calculate the weights of the CDR regions
+
+The following code is executed to calculate the weights of the CDR regions.
+
+```python
+from utils.binding_site import attribution_cdr
+weight_list = attribution_cdr(output, ab_info, ab_len)
+>>weight_list #[HCDR1,HCDR2,HCDR3,LCDR1,LCDR2,LCDR3]
+[[0.12554966, 0.21922821, 0.31082207, 0.11571003, 0.11434505, 0.11434505] ]
+```
 
 ## License
 
