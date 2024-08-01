@@ -181,7 +181,7 @@ weight_list = attribution_cdr(output, ab_info, ab_len)
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+DeepInterAware content and derivates are licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). 
 
 ## Cite Us
 
