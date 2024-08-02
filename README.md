@@ -113,9 +113,9 @@ Download the checkpoint of DeepInterAware and modify the paths in the code.
 To test DeepInterAware on SAbDab test data, please run
 
 ```python
-from models import DeepInterAware
+from models import DeepInterAware,load_model
 form feature_encoder import getAAfeature
-model=model_load('save_model/SAbDab.pt',device = 'gpu:0')
+
 ag_list = [
         'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
         'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
@@ -153,7 +153,7 @@ ab_list = [(seq_dict['H_cdr'],seq_dict['L_cdr'])]
 ag_token_ft,ab_token_ft = getAAfeature(ag_list, ab_list, gpu=1)
 ag_mask,ab_mask,ag_len,ab_len = get_mask(ag_list, ab_list,gpu=1)
 
-model= load_model(f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab.pth',gpu=1)
+model= load_model(model_name='DeepInterAware',f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab.pth',gpu=1)
 model.eval()
 with torch.no_grad():
     output = model.inference(ag_token_ft,ab_token_ft,ag_mask,ab_mask)
@@ -177,6 +177,45 @@ from utils.binding_site import attribution_cdr
 weight_list = attribution_cdr(output, ab_info, ab_len)
 >>weight_list #[HCDR1,HCDR2,HCDR3,LCDR1,LCDR2,LCDR3]
 [[0.12554966, 0.21922821, 0.31082207, 0.11571003, 0.11434505, 0.11434505] ]
+```
+
+### Binding affinity changes
+
+![affinity_changes](assess/affinity_changes.png)
+
+```python
+from models import load_model
+from munch import Munch
+model = load_model(model_name='DeepInterAware_AM',f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab.pth',gpu=1)
+wt_ag_list = [
+        'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
+        'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
+] #The antigen sequence length is less than 800
+wt_ab_list = [
+    ('DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLW','SVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF'),
+    ('TFSSYTMSWVLEWVAIISSGGSYTYYSYCTRDEGNGNYVEAMDYW','NIHNYLAWYQQPQLLVYNAKTLADGYCQHFWSTPRTF')
+]#The CDR sequence length is less than 110
+
+wt_ag_token_ft,wt_ab_token_ft = getAAfeature(wt_ag_list, wt_ab_list, gpu=1)
+wt_ag_mask,wt_ab_mask,ag_len,ab_len = get_mask(wt_ag_list, wt_ab_list,gpu=1)
+
+mu_ag_list = [
+        'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
+        'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
+] #The antigen sequence length is less than 800
+mu_ab_list = [
+    ('DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLW','SVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF'),
+    ('TFSSYTMSWVLEWVAIISSGGSYTYYSYCTRDEGNGNYVEAMDYW','NIHNYLAWYQQPQLLVYNAKTLADGYCQHFWSTPRTF')
+]#The CDR sequence length is less than 110
+mu_ag_token_ft,mu_ab_token_ft = getAAfeature(mu_ag_list, mu_ab_list, gpu=1)
+mu_ag_mask,mu_ab_mask,ag_len,ab_len = get_mask(mu_ag_list, mu_ab_list,gpu=1)
+
+wt = {'ag_token_ft': wt_ag_token_ft, 'ab_token_ft': wt_ab_token_ft,'ag_mask': wt_ag_mask,'ab_mask': wt_ab_mask}
+wt = Munch(wt)
+mu = {'ag_token_ft': mu_ag_token_ft, 'ab_token_ft': mu_ab_token_ft,'ag_mask': mu_ag_mask,'ab_mask': mu_ab_mask}
+mu = Munch(mu)
+output = model.inference(wt,mu)
+>>output.score
 ```
 
 ## License
