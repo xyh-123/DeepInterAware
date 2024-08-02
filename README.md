@@ -181,12 +181,12 @@ weight_list = attribution_cdr(output, ab_info, ab_len)
 
 ### Binding affinity changes
 
-![affinity_changes](fig/affinity_changes.png)
+![affinity_changes](figs/affinity_changes.png)
 
 ```python
 from models import load_model
 from munch import Munch
-model = load_model(model_name='DeepInterAware_AM',f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab.pth',gpu=1)
+model = load_model(model_name='DeepInterAware_AM',f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab_am.pth',gpu=1)
 wt_ag_list = [
         'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
         'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
