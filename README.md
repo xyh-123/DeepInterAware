@@ -181,7 +181,7 @@ weight_list = attribution_cdr(output, ab_info, ab_len)
 
 ### Binding affinity changes
 
-![affinity_changes](assess/affinity_changes.png)
+![affinity_changes](fig/affinity_changes.png)
 
 ```python
 from models import load_model
