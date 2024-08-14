@@ -1,24 +1,38 @@
 # DeepInterAware: deep interaction interface-aware network for improving Antigen-antibody Interaction Prediction from sequence data
+
 ![AppVeyor](https://img.shields.io/badge/pytorch-1.12.1-red)
 
 ![AppVeyor](https://img.shields.io/badge/transformers-4.24.0-brightgreen)
 
-## Introduction
+
+
+
+
+## DeepInterAware
 
 The identification of interactions between candidate antibodies and target antigens is a key step in the discovery of antibody drugs. Despite the scarcity of structural data, which poses a significant challenge to the development of antigen-antibody interaction prediction methods, the abundance of available sequence data offers a rich resource for computational modeling and analysis. In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Experimental results demonstrate that DeepInterAware outperforms existing methods and exhibits promising inductive capabilities for predicting interactions involving unseen antigens or antibodies, as well as transfer capabilities for similar tasks. The interaction interface information learned by DeepInterAware enables it to capture the underlying mechanisms of antigen-antibody interactions, facilitating the precise identification of potential binding sites from antigen-antibody pairs. Additionally, DeepInterAware is adept at detecting mutations in antibody sequences and providing accurate predictions for antigen-antibody pairs with subtle sequence variations. The experimental library screening for HER2 targets further underscores DeepInterAware’s exceptional capability in identifying binding antibodies for target antigens, establishing it as a robust tool for antibody drug screening.
 
-## Overview of DeepInterAware
-
 ![Our pipeline](figs/framework.png)
 
-## Table of Contents
-- [Overview](#overview)
-- [Installation](#installation)
-- [Data](#data)
-- [Model inference](#model-inference)
+## Table of contents
+
+- [Installation](##Installation)
+- [Data](##data)
+- [Model inference](##model-inference)
+- [Data process](##Data process)
+
+  - [Extract the CDR loops](###Extract the CDR loops)
+  - [Calculate Binding sites and Binding pairs](###Calculate Binding sites and Binding pairs)
+  - [Extraction of amino acid feature](###Extraction of amino acid feature)
 - [Model training](#model-training)
-- [Citation](#citation)
-- [License](#license)
+- [Usage](##Usage)
+
+  - [Predict antigen-antibody binding or neutralization](###Predict antigen-antibody binding or neutralization)
+  -  [Indentify Binding sites](###Indentify Binding sites)
+  - [Calculate the weights of the CDR regions](###Calculate the weights of the CDR regions)
+  -  [Binding affinity changes](###Binding affinity changes)
+- [License](##License)
+- [Cite Us](##Cite Us)
 
 ## Installation
 
@@ -30,6 +44,7 @@ pip install -r requirements.txt
 ```
 
 ## Data
+
 The AVIDa-hIL6 data are available at [link](https://cognanous.com/datasets/avida-hil6). The SAbDab data are available at [link](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab). The HIV data are available from CATNAP at [link](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp). The SARS-CoV-2 data are available from CoVAbDab at [link](http://opig.stats.ox.ac.uk/webapps/covabdab/). 
 
 The Antigen-Antibody data is in the `data` folder, the process data can be downloaded in this [link](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view?usp=sharing).
@@ -39,7 +54,9 @@ The Antigen-Antibody data is in the `data` folder, the process data can be downl
 * `data/HIV/ab_ag_pair.csv` is the all paired Ab-Ag data of HIV dataset.
 * `data/CoVAbDab/ab_ag_pair.csv` is the all paired Ab-Ag data of CoVAbDab  dataset.
 
-## Pre-processing
+## Data process
+
+### Extract the CDR loops
 
 To extract the CDR loops ,please run,
 
@@ -47,31 +64,13 @@ To extract the CDR loops ,please run,
 python cdr_extract.py --data_path ./data/SAbDab/
 ```
 
-Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . To extract the amino acid feature, please run,
-
-```python
-python feature_encodr.py --data_path ./data/SAbDab
-```
-
-## Model training
-
-To train DeepInterAware on antigen-antibody tasks, please run
-```
-python main.py --config=configs/SAbDAb.yml --dataset SAbDAb --kfold
-python main.py --config=configs/HIV.yml --dataset HIV --unseen_task unseen
-python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
-python transfer.py  --config=configs/HIV.yml --unseen_task transfer
-```
-
-## Calculate Binding sites and Binding pairs
-
-### Data pre-processing
+### Calculate Binding sites and Binding pairs
 
 To calculate the binding sites and binding pairs,please run
 
-```
+```python
 from binding_site import get_binding_site
-full_seq,full_label,seq_dict,ab_info,label_dict = get_binding_site('3vrl','H','L','C')
+full_seq,full_label,seq_dict,ab_info,label_dict = get_binding_site('3vrl','H','L','C') #PDB ID,heavy,light,antigen
 ```
 
 ```python
@@ -99,7 +98,25 @@ Munch({'H_cdr1_range': [27, 37], 'H_cdr1': 'TFSSYTMSWV', 'H_cdr2_range': [44, 61
 {'epitope': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], 'paratope': [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0], 'paratope-epitope': [(0, 41), (2, 38), (2, 39), (2, 40), (3, 25), (3, 41), (4, 25), (5, 16), (5, 37), (17, 17), (17, 19), (17, 20), (17, 21), (18, 37), (19, 18), (21, 18), (23, 18), (30, 16), (30, 22), (32, 21), (32, 23), (32, 24), (33, 16), (33, 25), (34, 23), (34, 44), (35, 25), (35, 42), (42, 17), (42, 20), (42, 21), (43, 13), (44, 14), (45, 21), (45, 22), (45, 23), (58, 23), (70, 21), (71, 21), (72, 21), (73, 19), (78, 21), (79, 21)]}
 ```
 
-## Model Inference
+### Extraction of amino acid feature
+
+Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . To extract the amino acid feature, please run,
+
+```python
+python feature_encodr.py --data_path ./data/SAbDab
+```
+
+## Model training
+
+To train DeepInterAware on antigen-antibody tasks, please run
+```
+python main.py --config=configs/SAbDAb.yml --dataset SAbDAb --kfold
+python main.py --config=configs/HIV.yml --dataset HIV --unseen_task unseen
+python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
+python transfer.py  --config=configs/HIV.yml --unseen_task transfer
+```
+
+## Usage
 
 Download the checkpoint of DeepInterAware and modify the paths in the code.
 
@@ -110,7 +127,9 @@ Download the checkpoint of DeepInterAware and modify the paths in the code.
 | Checkpoint on HIV Unseen | [link](https://figshare.com/ndownloader/files/45053224) |
 | Checkpoint on CoVAbDab   | [link](https://figshare.com/ndownloader/files/45053224) |
 
-To test DeepInterAware on SAbDab test data, please run
+### Predict antigen-antibody binding or neutralization
+
+For example, to test DeepInterAware on SAbDab test data, please run
 
 ```python
 from models import DeepInterAware,load_model
@@ -139,7 +158,7 @@ The output is:
 tensor([0.9996, 1.0000])
 ```
 
-### Indentify Binding sites 
+### Indentify Binding sites
 
 ```python
 from utils.binding_site import draw_site_map, get_binding_site
@@ -183,39 +202,10 @@ weight_list = attribution_cdr(output, ab_info, ab_len)
 
 ![affinity_changes](figs/affinity_changes.png)
 
+For batch prediction of binding affinity changes, execute the following command
+
 ```python
-from models import load_model
-from munch import Munch
-model = load_model(model_name='DeepInterAware_AM',f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab_am.pth',gpu=1)
-wt_ag_list = [
-        'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
-        'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
-] #The antigen sequence length is less than 800
-wt_ab_list = [
-    ('DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLW','SVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF'),
-    ('TFSSYTMSWVLEWVAIISSGGSYTYYSYCTRDEGNGNYVEAMDYW','NIHNYLAWYQQPQLLVYNAKTLADGYCQHFWSTPRTF')
-]#The CDR sequence length is less than 110
-
-wt_ag_token_ft,wt_ab_token_ft = getAAfeature(wt_ag_list, wt_ab_list, gpu=1)
-wt_ag_mask,wt_ab_mask,ag_len,ab_len = get_mask(wt_ag_list, wt_ab_list,gpu=1)
-
-mu_ag_list = [
-        'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
-        'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
-] #The antigen sequence length is less than 800
-mu_ab_list = [
-    ('DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLW','SVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF'),
-    ('TFSSYTMSWVLEWVAIISSGGSYTYYSYCTRDEGNGNYVEAMDYW','NIHNYLAWYQQPQLLVYNAKTLADGYCQHFWSTPRTF')
-]#The CDR sequence length is less than 110
-mu_ag_token_ft,mu_ab_token_ft = getAAfeature(mu_ag_list, mu_ab_list, gpu=1)
-mu_ag_mask,mu_ab_mask,ag_len,ab_len = get_mask(mu_ag_list, mu_ab_list,gpu=1)
-
-wt = {'ag_token_ft': wt_ag_token_ft, 'ab_token_ft': wt_ab_token_ft,'ag_mask': wt_ag_mask,'ab_mask': wt_ab_mask}
-wt = Munch(wt)
-mu = {'ag_token_ft': mu_ag_token_ft, 'ab_token_ft': mu_ab_token_ft,'ag_mask': mu_ag_mask,'ab_mask': mu_ab_mask}
-mu = Munch(mu)
-output = model.inference(wt,mu)
->>output.score
+python affinity_maturation.py --wt ./data/example/wt.csv --mu ./data/example/mu.csv --gpu 0
 ```
 
 ## License
