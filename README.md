@@ -16,23 +16,21 @@ The identification of interactions between candidate antibodies and target antig
 
 ## Table of contents
 
-- [Installation](##Installation)
-- [Data](##data)
-- [Model inference](##model-inference)
-- [Data process](##Data process)
-
-  - [Extract the CDR loops](###Extract the CDR loops)
-  - [Calculate Binding sites and Binding pairs](###Calculate Binding sites and Binding pairs)
-  - [Extraction of amino acid feature](###Extraction of amino acid feature)
+- [Installation](#Installation)
+- [Data](#data)
+- [Model inference](#model-inference)
+- [Data process](#Data process)
+  - [Extract the CDR loops](#Extract the CDR loops)
+  - [Calculate Binding sites and Binding pairs](#Calculate Binding sites and Binding pairs)
+  - [Extraction of amino acid feature](#Extraction of amino acid feature)
 - [Model training](#model-training)
 - [Usage](##Usage)
-
-  - [Predict antigen-antibody binding or neutralization](###Predict antigen-antibody binding or neutralization)
-  -  [Indentify Binding sites](###Indentify Binding sites)
-  - [Calculate the weights of the CDR regions](###Calculate the weights of the CDR regions)
-  -  [Binding affinity changes](###Binding affinity changes)
-- [License](##License)
-- [Cite Us](##Cite Us)
+  - [Predict antigen-antibody binding or neutralization](#Predict antigen-antibody binding or neutralization)
+  - [Indentify Binding sites](#Indentify Binding sites)
+  - [Calculate the weights of the CDR regions](#Calculate the weights of the CDR regions)
+  - [Binding affinity changes](#Binding affinity changes)
+- [License](#License)
+- [Cite Us](#Cite Us)
 
 ## Installation
 
