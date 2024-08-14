@@ -24,7 +24,7 @@ The identification of interactions between candidate antibodies and target antig
   - [Calculate Binding sites and Binding pairs](#Calculate Binding sites and Binding pairs)
   - [Extraction of amino acid feature](#Extraction of amino acid feature)
 - [Model training](#model-training)
-- [Usage](##Usage)
+- [Usage](#Usage)
   - [Predict antigen-antibody binding or neutralization](#Predict antigen-antibody binding or neutralization)
   - [Indentify Binding sites](#Indentify Binding sites)
   - [Calculate the weights of the CDR regions](#Calculate the weights of the CDR regions)
