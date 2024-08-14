@@ -18,9 +18,8 @@ The identification of interactions between candidate antibodies and target antig
 
 - [Installation](#Installation)
 - [Data](#data)
-- [Model inference](#model-inference)
 - [Data process](#Data process)
-  - [Extract the CDR loops](#Extract the CDR loops)
+  - [Extract the CDR loops](#extract-the-CDR-loops)
   - [Calculate Binding sites and Binding pairs](#Calculate Binding sites and Binding pairs)
   - [Extraction of amino acid feature](#Extraction of amino acid feature)
 - [Model training](#model-training)
@@ -30,7 +29,7 @@ The identification of interactions between candidate antibodies and target antig
   - [Calculate the weights of the CDR regions](#Calculate the weights of the CDR regions)
   - [Binding affinity changes](#Binding affinity changes)
 - [License](#License)
-- [Cite Us](#Cite Us)
+- [Cite Us](#cite-us)
 
 ## Installation
 
