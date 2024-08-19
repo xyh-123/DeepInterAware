@@ -155,7 +155,7 @@ The output is:
 tensor([0.9996, 1.0000])
 ```
 
-### Indentify Binding sites
+### Identify Binding sites
 
 ```python
 from utils.binding_site import draw_site_map, get_binding_site
@@ -195,7 +195,7 @@ weight_list = attribution_cdr(output, ab_info, ab_len)
 [[0.12554966, 0.21922821, 0.31082207, 0.11571003, 0.11434505, 0.11434505] ]
 ```
 
-### Binding affinity changes
+### Predict the binding affinity changes
 
 ![affinity_changes](figs/affinity_changes.png)
 
