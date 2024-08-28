@@ -1,12 +1,8 @@
-# DeepInterAware: deep interaction interface-aware network for improving Antigen-antibody Interaction Prediction from sequence data
+# DeepInterAware: Deep interaction interface-aware network for improving antigen-antibody Interaction Prediction from sequence data
 
 ![AppVeyor](https://img.shields.io/badge/pytorch-1.12.1-red)
 
 ![AppVeyor](https://img.shields.io/badge/transformers-4.24.0-brightgreen)
-
-
-
-
 
 ## DeepInterAware
 
@@ -20,12 +16,12 @@ The identification of interactions between candidate antibodies and target antig
 - [Data](#data)
 - [Data process](#data-process)
   - [Extract the CDR loops](#extract-the-CDR-loops)
-  - [Calculate Binding sites and Binding pairs](#calculate-binding-sites-and-binding-pairs)
+  - [Calculate binding sites and binding pairs](#calculate-binding-sites-and-binding-pairs)
   - [Extraction of amino acid feature](#extraction-of-amino-acid-feature)
 - [Model training](#model-training)
 - [Usage](#Usage)
   - [Predict antigen-antibody binding or neutralization](#predict-antigen-antibody-binding-or-neutralization)
-  - [Indentify Binding sites](#Indentify-Binding-sites)
+  - [Indentify binding sites](#Indentify-Binding-sites)
   - [Calculate the weights of the CDR regions](#Calculate-the-weights-of-the-CDR-regions)
   - [Binding affinity changes](#Binding-affinity-changes)
 - [License](#License)
@@ -34,7 +30,8 @@ The identification of interactions between candidate antibodies and target antig
 ## Installation
 
 We highly recommand that you use Anaconda for Installation
-```
+
+```shell
 conda create -n DeepInterAware
 conda activate DeepInterAware
 pip install -r requirements.txt
@@ -57,11 +54,11 @@ The Antigen-Antibody data is in the `data` folder, the process data can be downl
 
 To extract the CDR loops ,please run,
 
-```
+```python
 python cdr_extract.py --data_path ./data/SAbDab/
 ```
 
-### Calculate Binding sites and Binding pairs
+### Calculate binding sites and binding pairs
 
 To calculate the binding sites and binding pairs,please run
 
@@ -106,7 +103,8 @@ python feature_encodr.py --data_path ./data/SAbDab
 ## Model training
 
 To train DeepInterAware on antigen-antibody tasks, please run
-```
+
+```python
 python main.py --config=configs/SAbDAb.yml --dataset SAbDAb --kfold
 python main.py --config=configs/HIV.yml --dataset HIV --unseen_task unseen
 python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
@@ -155,7 +153,7 @@ The output is:
 tensor([0.9996, 1.0000])
 ```
 
-### Identify Binding sites
+### Indentify binding sites
 
 ```python
 from utils.binding_site import draw_site_map, get_binding_site
@@ -195,7 +193,7 @@ weight_list = attribution_cdr(output, ab_info, ab_len)
 [[0.12554966, 0.21922821, 0.31082207, 0.11571003, 0.11434505, 0.11434505] ]
 ```
 
-### Predict the binding affinity changes
+### Binding affinity changes
 
 ![affinity_changes](figs/affinity_changes.png)
 
@@ -213,7 +211,7 @@ DeepInterAware content and derivates are licensed under [CC BY-NC 4.0](https://c
 
 Feel free to cite this work if you find it useful to you!
 
-```
+```sh
 @article{DeepInterAware,
     title={DeepInterAware: deep interaction interface-aware network for improving Antigen-antibody Interaction Prediction from sequence data},
     author={Yuhang Xia, Zhiwei Wang, Yongkang Wang, Minyao Qiu, Wen Zhang},
