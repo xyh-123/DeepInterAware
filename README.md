@@ -6,7 +6,7 @@
 
 ## DeepInterAware
 
-The identification of interactions between candidate antibodies and target antigens is a key step in the discovery of antibody drugs. Despite the scarcity of structural data, which poses a significant challenge to the development of antigen-antibody interaction prediction methods, the abundance of available sequence data offers a rich resource for computational modeling and analysis. In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Experimental results demonstrate that DeepInterAware outperforms existing methods and exhibits promising inductive capabilities for predicting interactions involving unseen antigens or antibodies, as well as transfer capabilities for similar tasks. The interaction interface information learned by DeepInterAware enables it to capture the underlying mechanisms of antigen-antibody interactions, facilitating the precise identification of potential binding sites from antigen-antibody pairs. Additionally, DeepInterAware is adept at detecting mutations in antibody sequences and providing accurate predictions for antigen-antibody pairs with subtle sequence variations. The experimental library screening for HER2 targets further underscores DeepInterAware’s exceptional capability in identifying binding antibodies for target antigens, establishing it as a robust tool for antibody drug screening.
+The identification of interactions between candidate antibodies and target antigens is a key step in the discovery of antibody-drug. The interaction between antigens and antibodies is essentially a structural process. However, the scarcity of structure data poses a significant challenge to the development of antigen-antibody interaction prediction methods. Fortunately, the abundance of available sequence data provides a rich resource for computational modeling and analysis. In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Experimental results demonstrate that DeepInterAware outperforms existing methods and exhibits promising inductive capabilities for predicting interactions involving unseen antigens or antibodies, as well as transfer capabilities for similar tasks. By leveraging sequence data to capture interaction interface information, DeepInterAware transcends the limitations of traditional sequence-based methods. DeepInterAware allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, enhancing predictive accuracy and offering the capability to identify potential binding sites. Furthermore, DeepInterAware excels in detecting mutations within antigens or antibodies and offers precise predictions of binding free energy changes due to mutations. The experimental library screening for the HER2 target further underscores DeepInterAware’s exceptional capability in identifying binding antibodies for target antigens, establishing it as a robust tool for antibody-drug screening.
 
 ![Our pipeline](figs/framework.png)
 
@@ -213,8 +213,8 @@ Feel free to cite this work if you find it useful to you!
 
 ```sh
 @article{DeepInterAware,
-    title={DeepInterAware: deep interaction interface-aware network for improving Antigen-antibody Interaction Prediction from sequence data},
-    author={Yuhang Xia, Zhiwei Wang, Yongkang Wang, Minyao Qiu, Wen Zhang},
+    title={DeepInterAware: deep interaction interface-aware network for improving antigen-antibody interaction prediction from sequence data},
+    author={Yuhang Xia, Zhiwei Wang,Feng Huang,Zhankun Xiong,Yongkang Wang, Minyao Qiu, Wen Zhang},
     year={2024},
 }
 ```
