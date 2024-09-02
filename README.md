@@ -205,7 +205,7 @@ python affinity_maturation.py --wt ./data/example/wt.csv --mu ./data/example/mu.
 
 ## License
 
-DeepInterAware content and derivates are licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). 
+DeepInterAware content and derivates are licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).  If you have any requirements beyond the agreement, you can contact us.
 
 ## Cite Us
 
