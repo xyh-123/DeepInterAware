@@ -178,7 +178,6 @@ class BANLayer(nn.Module):
 
     def forward(self, v, q, softmax=False):
         """
-        M和N表示蛋白质中编码的亚结构和药物中的原子的数量。
         :param v: drug batch*N*embeddim
         :param q: protein batch*M*embeddim
         :param softmax:
