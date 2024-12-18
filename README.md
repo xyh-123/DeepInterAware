@@ -1,213 +1,173 @@
 # DeepInterAware: Deep interaction interface-aware network for improving antigen-antibody Interaction Prediction from sequence data
 
-![AppVeyor](https://img.shields.io/badge/pytorch-1.12.1-red)
-
-![AppVeyor](https://img.shields.io/badge/transformers-4.24.0-brightgreen)
-
 ## DeepInterAware
 
-The identification of interactions between candidate antibodies and target antigens is a key step in the discovery of antibody-drug. The interaction between antigens and antibodies is essentially a structural process. However, the scarcity of structure data poses a significant challenge to the development of antigen-antibody interaction prediction methods. Fortunately, the abundance of available sequence data provides a rich resource for computational modeling and analysis. In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Experimental results demonstrate that DeepInterAware outperforms existing methods and exhibits promising inductive capabilities for predicting interactions involving unseen antigens or antibodies, as well as transfer capabilities for similar tasks. By leveraging sequence data to capture interaction interface information, DeepInterAware transcends the limitations of traditional sequence-based methods. DeepInterAware allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, enhancing predictive accuracy and offering the capability to identify potential binding sites. Furthermore, DeepInterAware excels in detecting mutations within antigens or antibodies and offers precise predictions of binding free energy changes due to mutations. The experimental library screening for the HER2 target further underscores DeepInterAware’s exceptional capability in identifying binding antibodies for target antigens, establishing it as a robust tool for antibody-drug screening.
+ In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Relying solely on sequence data, it allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, offering the capability to identify potential binding sites and predict binding free energy changes due to mutations. 
 
 ![Our pipeline](figs/framework.png)
 
 ## Table of contents
 
-- [Installation](#Installation)
-- [Data](#data)
-- [Data process](#data-process)
-  - [Extract the CDR loops](#extract-the-CDR-loops)
-  - [Calculate binding sites and binding pairs](#calculate-binding-sites-and-binding-pairs)
-  - [Extraction of amino acid feature](#extraction-of-amino-acid-feature)
-- [Model training](#model-training)
-- [Usage](#Usage)
-  - [Predict antigen-antibody binding or neutralization](#predict-antigen-antibody-binding-or-neutralization)
-  - [Indentify binding sites](#Indentify-Binding-sites)
-  - [Calculate the weights of the CDR regions](#Calculate-the-weights-of-the-CDR-regions)
-  - [Binding affinity changes](#Binding-affinity-changes)
-- [License](#License)
-- [Cite Us](#cite-us)
+- [Dependencies](#1. Dependencies)
+  - [From Conda](#1.1 From-Conda)
+  - [From Docker](#1.2 From-Docker)
 
-## Installation
+- [Data and Data process](#2. Data and Data process)
+  - [Ag-Ab binding datasets](#2.1 Ag-Ab binding datasets)
+  - [Ag-Ab neutralization datasets](#2.2 Ag-Ab neutralization datasets)
+  - [Binding free energy change dataset](#2.3 Binding free energy change dataset)
+  - [Data process](#2.4 Data process)
+    - [Extraction of amino acid feature](#2.4.1 extraction-of-amino-acid-feature)
 
-We highly recommand that you use Anaconda for Installation
+- [Model Train](#3. Model Train)
+  - [Ag-Ag Binding Prediction](#3.1 Ag-Ag Binding Prediction)
+  - [Ag-Ab Neutralization Prediction](#3.2 Ag-Ab Neutralization Prediction)
 
-```shell
+- [Model Test](#4. Moldel Test)
+  - [Binding/Neutralization Prediction](#4.1 Binding/Neutralization Prediction)
+  - [Identifies Potential Binding Sites](#4.2 Identifies Potential Binding Sites)
+  - [ Calculates the binding affinity changes](#4.3 Calculates the binding affinity changes)
+- [License](#5. License)
+- [Conflict of Interest](#6. Conflict of Interest)
+- [Cite Us](#7. cite-us)
+
+## 1. Dependencies
+
+<font style="color:rgb(31, 35, 40);">Our model is tested in Linux with the following packages:</font>
+
++ <font style="color:rgb(31, 35, 40);">CUDA >= 11.3</font>
++ <font style="color:rgb(31, 35, 40);">PyTorch == 1.12.1 </font>
++ <font style="color:rgb(31, 35, 40);">anarchi == 1.3</font>
++ <font style="color:rgb(31, 35, 40);">ablang</font>
++ <font style="color:rgb(31, 35, 40);">antiberty</font>
++ transformers==4.24.0
+
+### 1.1 From Conda
+
+We highly <font style="color:black;">recommend </font> that you use Anaconda for Installation:
+
+```plain
 conda create -n DeepInterAware
 conda activate DeepInterAware
 pip install -r requirements.txt
 ```
 
-## Data
+### 1.2 From Docker
 
-The AVIDa-hIL6 data are available at [link](https://cognanous.com/datasets/avida-hil6). The SAbDab data are available at [link](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab). The HIV data are available from CATNAP at [link](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp). The SARS-CoV-2 data are available from CoVAbDab at [link](http://opig.stats.ox.ac.uk/webapps/covabdab/). 
-
-The Antigen-Antibody data is in the `data` folder, the process data can be downloaded in this [link](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view?usp=sharing).
-
-* `data/AVIDa_hIL6/ab_ag_pair.csv` is the paired Ab-Ag data of AVIDa_hIL6 dataset.
-* `data/SAbDAb/ab_ag_pair.csv` is the paired Ab-Ag data of SAbDAb dataset.
-* `data/HIV/ab_ag_pair.csv` is the all paired Ab-Ag data of HIV dataset.
-* `data/CoVAbDab/ab_ag_pair.csv` is the all paired Ab-Ag data of CoVAbDab  dataset.
-
-## Data process
-
-### Extract the CDR loops
-
-To extract the CDR loops ,please run,
-
-```python
-python cdr_extract.py --data_path ./data/SAbDab/
+```shell
+#run the docker
+docker run --gpus all -idt deepinteraware --name run_images
 ```
 
-### Calculate binding sites and binding pairs
+## 2. Data and Data process
 
-To calculate the binding sites and binding pairs,please run
+### 2.1 Ag-Ab binding datasets
 
-```python
-from binding_site import get_binding_site
-full_seq,full_label,seq_dict,ab_info,label_dict = get_binding_site('3vrl','H','L','C') #PDB ID,heavy,light,antigen
-```
+[AVIDa-hIL6]() is a comprehensive Ag-Ab binding sequence dataset that includes the wild-type protein and 30 mutates of the human interleukin-6 (IL-6), alongside 38,599 VHH antibodies. To refine the dataset for our study, we employed ANARCI to extract the CDR loops from the antibody sequences and finally obtained 10,178 unique binding pairs and 315,708 non-binding pairs.
 
-```python
->>full_dict #Full length sequences and site label
-{'res_H': 'DVKLVESGGGLVKPGGSLKLSCAASGFTFSSYTMSWVRQTPEKRLEWVAIISSGGSYTYYSDSVKGRFTISRDNAKNTLYLQMSSLKSEDTAMYYCTRDEGNGNYVEAMDYWGQGTSVTVSSAKTTPPSVYPLAPGSAAQTNSMVTLGCLVKGYFPEPVTVTWNSGSLSSGVHTFPAVLQSDLYTLSSSVTVPSSTWPSETVTCNVAHPASSTKVDKKIVPR', 'res_L': 'DIQMTQSPASLSASVGETVTITCRASGNIHNYLAWYQQKQGKSPQLLVYNAKTLADGVPSRFSGSGSGTQYSLKINSLQPEDFGSYYCQHFWSTPRTFGGGTKLEIKRADAAPTVSIFPPSSEQLTSGGASVVCFLNNFYPKDINVKWKIDGSERQNGVLNSWTDQDSKDSTYSMSSTLTLTKDEYERHNSYTCEATHKTSTSPIVKSFNRNEC', 'res_AG': 'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'}
-```
+[SAbDab](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/) database  is a comprehensive compilation of all accessible Ag-Ab complexes, meticulously curated from the Protein Data Bank (PDB).   To adapt to the binding prediction task in our paper, we collected the complexes with antigen sequences containing more than 50 residues, and filtered out duplicates with the antibody CDR loops, arriving at a refined set of 1,513 unique complexes as the SAbDab dataset in our paper.
 
-```python
->>full_label
-{'label_H': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'label_L': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'label_AG': [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1], 'label_AGH': [[8, 10, 46, 48, 48, 48, 48, 48, 48, 49, 51, 51, 51, 52, 52, 52, 52, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 56, 57, 58, 64, 67, 68, 69, 70, 71, 72], [56, 56, 56, 56, 51, 53, 55, 52, 54, 56, 32, 31, 50, 32, 49, 57, 58, 104, 103, 105, 102, 99, 100, 101, 106, 105, 98, 58, 104, 104, 58, 58, 58, 56, 56, 56, 55]], 'label_AGL': [[55, 56, 56, 56, 57, 57, 58, 58, 59, 60, 64], [95, 93, 91, 92, 91, 90, 90, 31, 91, 91, 93]]}
-```
+### 2.2 Ag-Ab neutralization datasets
 
-```python
->>ab_info #antibody information
-Munch({'H_cdr1_range': [27, 37], 'H_cdr1': 'TFSSYTMSWV', 'H_cdr2_range': [44, 61], 'H_cdr2': 'LEWVAIISSGGSYTYYS', 'H_cdr3_range': [94, 112], 'H_cdr3': 'YCTRDEGNGNYVEAMDYW', 'H_cdr': 'TFSSYTMSWVLEWVAIISSGGSYTYYSYCTRDEGNGNYVEAMDYW', 'L_cdr1_range': [27, 38], 'L_cdr1': 'NIHNYLAWYQQ', 'L_cdr2_range': [43, 57], 'L_cdr2': 'PQLLVYNAKTLADG', 'L_cdr3_range': [86, 98], 'L_cdr3': 'YCQHFWSTPRTF', 'L_cdr': 'NIHNYLAWYQQPQLLVYNAKTLADGYCQHFWSTPRTF'})
-```
+[HIV](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/) sequence database comprises neutralization antibodies related to the Human Immunodeficiency Virus (HIV). We meticulously filtered out Ag-Ab pairs that exhibited sequence homology levels exceeding 90% for both the antigen and the antibody components, and curated the HIV sequence dataset encompasses 24,907 neutralization pairs with sequences and 26,480 non-neutralization pairs.
 
-```python
->>seq_dict
-{'H_cdr': 'DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLW', 'ag_seq': 'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA', 'ab_cdr': 'DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLWSVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF', 'L_cdr': 'SVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF'}
-```
+[CoV-AbDab](https://opig.stats.ox.ac.uk/webapps/covabdab/) database offers detailed information regarding conventional antibodies and nanobodies capable of binding to various coronaviruses. We collected the Ag–Ab neutralization and non-neutralization pairs and antibody sequences from the CoV-AbDab database, and finally obtained the CoV-AbDab dataset consisting of 5,486 neutralization pairs and 9,110 non-neutralization pairs with sequences. 
 
-```python
->>label_dict #The label after the CDR region is extracted
-{'epitope': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], 'paratope': [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0], 'paratope-epitope': [(0, 41), (2, 38), (2, 39), (2, 40), (3, 25), (3, 41), (4, 25), (5, 16), (5, 37), (17, 17), (17, 19), (17, 20), (17, 21), (18, 37), (19, 18), (21, 18), (23, 18), (30, 16), (30, 22), (32, 21), (32, 23), (32, 24), (33, 16), (33, 25), (34, 23), (34, 44), (35, 25), (35, 42), (42, 17), (42, 20), (42, 21), (43, 13), (44, 14), (45, 21), (45, 22), (45, 23), (58, 23), (70, 21), (71, 21), (72, 21), (73, 19), (78, 21), (79, 21)]}
-```
+### 2.3 Binding free energy change dataset
 
-### Extraction of amino acid feature
+[AB-Bind](https://github.com/sarahsirin/AB-Bind-Database) database  includes 1,101 mutants with experimentally determined changes in binding free energies (<font style="color:black;">△△</font>G) across 32 Ag-Ab complexes. In our study, we used all the data in the database as the dataset. 
+
+[SKEMPI2](https://life.bsc.es/pid/skempi2/) database offers changes in protein-protein binding  energy, kinetics, and thermodynamics upon mutation. We screened Ag-Ab mutants, consisting of 1,021 unique mutants, as the SKEMPI2 dataset.
+
+### 2.4 Data process
+
+All the processed data can be downloaded from [Link]([https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view) ) and stored in the data directory.
+
+#### 2.4.1 Extraction of amino acid feature
 
 Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . To extract the amino acid feature, please run,
 
 ```python
-python feature_encodr.py --data_path ./data/SAbDab
+python feature_encodr.py --data_path ./data/HIV --gpu 0
 ```
 
-## Model training
+## 3. Model Train
 
-To train DeepInterAware on antigen-antibody tasks, please run
+### 3.1 Ag-Ag Binding Prediction
 
-```python
++ To evaluate the efficiency of DeepInterAware for binding prediction,  we conducted  the 5-fold cross-validation on the SAbDab dataset, please run:
+
+```plain
 python main.py --config=configs/SAbDAb.yml --dataset SAbDAb --kfold
-python main.py --config=configs/HIV.yml --dataset HIV --unseen_task unseen
-python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --unseen_task ag_unseen
+```
+
++ To evaluate the efficiency of DeepInterAware for binding prediction, we conducted  the 5-fold cross-validation on the AVIDa-hIL6 dataset, please run:
+
+```plain
+python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6
+```
+
++ For those baselines in our paper, we also evaluated their performance on these datasets (see Section 1.5 of the Supplementary Materials for implementation details), please run:
+
+```plain
+python baselines/baseline_main.py ----config=configs/baseline.yml --dataset SAbDab
+```
+
++ The performances of our method and these baselines on the SAbDab dataset and  AVIDa-hIL6 dataset are demonstrated in Table 1 in the manuscript.
+
+### 3.2 Ag-Ab Neutralization Prediction
+
+To evaluate the efficiency of DeepInterAware for neutralization prediction under the Ab Unseen, Ag Unseen, and Ag&Ab Unseen scenarios, we conducted  the 5-fold cross-validation on the HIV dataset, please run:
+
+```
+python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task unseen
+python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ab_unseen
+python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen
+```
+
+To evaluate the efficiency of DeepInterAware for transferability, we conducted  the 5-fold cross-validation on the CoV-AbDab dataset, please run:
+
+```
 python transfer.py  --config=configs/HIV.yml --unseen_task transfer
 ```
 
-## Usage
+## 4. Model Test
 
-Download the checkpoint of DeepInterAware and modify the paths in the code.
+### 4.1 Binding/Neutralization Prediction
 
-| Content                  | Link                                                    |
-| ------------------------ | ------------------------------------------------------- |
-| Checkpoint on SAbDab     | [link](https://figshare.com/ndownloader/files/44970310) |
-| Checkpoint on AVIDa-hIL6 | [link](https://figshare.com/ndownloader/files/44970310) |
-| Checkpoint on HIV Unseen | [link](https://figshare.com/ndownloader/files/45053224) |
-| Checkpoint on CoVAbDab   | [link](https://figshare.com/ndownloader/files/45053224) |
+```
+python usage.py --task SAbDab --test_file ./data/SAbDab/test_ag_ab.csv --gpu 0 --model_path ./save_models/
 
-### Predict antigen-antibody binding or neutralization
-
-For example, to test DeepInterAware on SAbDab test data, please run
-
-```python
-from models import DeepInterAware,load_model
-form feature_encoder import getAAfeature
-
-ag_list = [
-        'DSFVCFEHKGFDISQCPKIGGHGSKKCTGDAAFCSAYECTAQYANAYCSHA',
-        'SILDIKQGPKESFRDYVDRFFKTLRAEQCTQDVKNWMTDTLLVQNANPDCKTILRALGPGATLEEMMTACQGV'
-] #The antigen sequence length is less than 800
-ab_list = [
-    ('DPNSDHMSWVLEWIAIIYASGTTYYAFCATYPNYPTDNLW','SVYNYLLSWYQQPKRLIYSASTLASGYCLGSYDGNSADCLAF'),
-    ('TFSSYTMSWVLEWVAIISSGGSYTYYSYCTRDEGNGNYVEAMDYW','NIHNYLAWYQQPQLLVYNAKTLADGYCQHFWSTPRTF')
-]#The CDR sequence length is less than 110
-ag_token_ft,ab_token_ft = getAAfeature(ag_list, ab_list, gpu=0)
-ag_mask,ab_mask = get_mask(ag_list, ab_list,gpu=0)
-model= load_model(f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab.pth',gpu=0)
-model.eval()
-with torch.no_grad():
-    output = model.inference(ag_token_ft,ab_token_ft,ag_mask,ab_mask)
-print(output.score)
+python usage.py --task HIV --test_file ./data/HIV/test_ag_ab.csv --gpu 0 --model_path ./save_models/
 ```
 
-The output is:
+### 4.2 Identifies Potential Binding Sites
 
-```python
-tensor([0.9996, 1.0000])
++ In addition to  its primary benefits in Ag-Ab interaction prediction, our model can learn some structural information for the sequences and lead to superior performances, and we try to validate this point by testing the capability of our method in identifying potential binding sites:
+
+```plain
+python usage.py --task binding_site --pdb_file ./data/SAbDab/pdb/ --pdb 6i9i_H_L_C --gpu 0 --model_path ./save_models/
 ```
 
-### Indentify binding sites
-
-```python
-from utils.binding_site import draw_site_map, get_binding_site
-from utils.feature_encoder import get_mask,getAAfeature
-from models import load_model
-import torch
-
-full_seq, full_label, seq_dict, ab_info, label_dict = get_binding_site('6i9i','H','L','C')
-ag_list = [seq_dict['ag_seq']]
-ab_list = [(seq_dict['H_cdr'],seq_dict['L_cdr'])]
-ag_token_ft,ab_token_ft = getAAfeature(ag_list, ab_list, gpu=1)
-ag_mask,ab_mask,ag_len,ab_len = get_mask(ag_list, ab_list,gpu=1)
-
-model= load_model(model_name='DeepInterAware',f'./configs/SAbDab.yml',model_path=f'./save_models/SAbDab.pth',gpu=1)
-model.eval()
-with torch.no_grad():
-    output = model.inference(ag_token_ft,ab_token_ft,ag_mask,ab_mask)
-ag_recall,ab_recall,pair_recall = draw_site_map('6i9i',output,ag_len,ab_len,label_dict,threshold=0.5)
-```
-
-Antigen attention map
-
-![Our pipeline](figs/6i9i_ag.png)
-
-Antibody attention map
-
-![Our pipeline](figs/6i9i_ab.png)
-
-### Calculate the weights of the CDR regions
-
-The following code is executed to calculate the weights of the CDR regions.
-
-```python
-from utils.binding_site import attribution_cdr
-weight_list = attribution_cdr(output, ab_info, ab_len)
->>weight_list #[HCDR1,HCDR2,HCDR3,LCDR1,LCDR2,LCDR3]
-[[0.12554966, 0.21922821, 0.31082207, 0.11571003, 0.11434505, 0.11434505] ]
-```
-
-### Binding affinity changes
+### 4.3 Calculates the binding affinity changes
 
 ![affinity_changes](figs/affinity_changes.png)
 
-For batch prediction of binding affinity changes, execute the following command
++ The residue mutations of antigen and antibody sequences can significantly alter the AAI. To thoroughly evaluate the performance of DeepInterAware in identifying the efficacy of Ag-Ab mutants, we adopt Ag-Ab complexes and mutants as well as experimentally determined changes in binding free energies:
 
-```python
-python affinity_maturation.py --wt ./data/example/wt.csv --mu ./data/example/mu.csv --gpu 0
+```plain
+python usage.py --task ddG --wt ./data/example/wt.csv --mu ./data/example/mu.csv --gpu 0 --model_path ./save_models/
 ```
 
-## License
+## 5. License
 
-DeepInterAware content and derivates are licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).  If you have any requirements beyond the agreement, you can contact us.
+<font style="color:rgb(51, 51, 51);">DeepInterAware content and derivates are licensed under </font>[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)<font style="color:rgb(51, 51, 51);">. If you have any requirements beyond the agreement, you can contact us.</font>
 
-## Cite Us
+## 6. Conflict of Interest
+
+W.Z., and Y.X. are inventors on patent applications related to this work filed by Wuhan Huamei Biotech Co.,Ltd. (Chinese  patent application nos. 2023.12.21 202311783760.X). The authors declare no other competing interests.
+
+## 7. Cite Us
 
 Feel free to cite this work if you find it useful to you!
 
@@ -218,4 +178,8 @@ Feel free to cite this work if you find it useful to you!
     year={2024},
 }
 ```
+
+
+
+
 
