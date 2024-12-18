@@ -143,7 +143,7 @@ python usage.py --task SAbDab --test_file ./data/SAbDab/test_ag_ab.csv --gpu 0 -
 python usage.py --task HIV --test_file ./data/HIV/test_ag_ab.csv --gpu 0 --model_path ./save_models/
 ```
 
-### Identifies Potential Binding Sites
+### Identify Potential Binding Sites
 
 + In addition to  its primary benefits in Ag-Ab interaction prediction, our model can learn some structural information for the sequences and lead to superior performances, and we try to validate this point by testing the capability of our method in identifying potential binding sites:
 
@@ -151,7 +151,7 @@ python usage.py --task HIV --test_file ./data/HIV/test_ag_ab.csv --gpu 0 --model
 python usage.py --task binding_site --pdb_file ./data/SAbDab/pdb/ --pdb 6i9i_H_L_C --gpu 0 --model_path ./save_models/
 ```
 
-### Calculates the binding affinity changes
+### Predict the binding affinity changes
 
 ![affinity_changes](figs/affinity_changes.png)
 
