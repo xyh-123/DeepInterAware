@@ -20,13 +20,13 @@
     - [Extraction of amino acid feature](#extraction-of-amino-acid-feature)
 
 - [Model Train](#Model-Train)
-  - [Ag-Ag Binding Prediction](#Ag-Ag Binding-Prediction)
+  - [Ag-Ag Binding Prediction](#Ag-Ag-Binding-Prediction)
   - [Ag-Ab Neutralization Prediction](#Ag-Ab-Neutralization-Prediction)
 
 - [Model Test](#Moldel-Test)
   - [Binding/Neutralization Prediction](#Binding/Neutralization-Prediction)
   - [Identifies Potential Binding Sites](#Identifies-Potential-Binding-Sites)
-  - [ Calculates the binding affinity changes](#Calculates-the binding-affinity-changes)
+  - [ Calculates the binding affinity changes](#Calculates-the-binding-affinity-changes)
 - [License](#License)
 - [Conflict of Interest](#Conflict-of-Interest)
 - [Cite Us](#cite-us)
