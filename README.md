@@ -81,7 +81,7 @@ docker run --gpus all -idt deepinteraware --name run_images
 
 ### Data process
 
-All the processed data can be downloaded from [Link]([https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view) ) and stored in the data directory.
+All the processed dataset can be downloaded from [Link](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view?usp=drive_link)  and stored in the data directory.
 
 #### Extraction of amino acid feature
 
@@ -113,7 +113,7 @@ python main.py --config=configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6
 python baselines/baseline_main.py ----config=configs/baseline.yml --dataset SAbDab
 ```
 
-+ The performances of our method and these baselines on the SAbDab dataset and  AVIDa-hIL6 dataset are demonstrated in Table 1 in the manuscript.
++ The performances of our method and these baselines on the SAbDab dataset and  CoV-AbDab dataset are demonstrated in Table 1 in our paper.
 
 ### Ag-Ab Neutralization Prediction
 
@@ -130,6 +130,8 @@ To evaluate the efficiency of DeepInterAware for transferability, we conducted  
 ```
 python transfer.py  --config=configs/HIV.yml --unseen_task transfer
 ```
+
+- The performances of our method and these baselines on the HIV dataset and  AVIDa-hIL6 dataset are demonstrated in Table 1 in our paper.
 
 ## Model Test
 
