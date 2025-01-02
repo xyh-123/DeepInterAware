@@ -1,0 +1,38 @@
+bcn:
+  heads: 2
+predict:
+  binary: 2
+  hidden_dim: 256
+  in_dim: 256
+  name: MLP
+  out_dim: 256
+  simple: false
+protein:
+  channel: 192
+  dropout: 0.1
+  max_antibody_len: 908
+  max_antigen_len: 800
+  padding: true
+  use_bn: true
+result:
+  output_dir: ./result
+  save_model: true
+set:
+  ab_model: ablang
+  alpha: 0.4
+  dataset: SAbDab
+  device: 0
+  model_name: DeepInterAware
+  phy: false
+  pretrain: false
+  project: true
+  resume_path: null
+  unseen_task: unseen
+solver:
+  batch_size: 128
+  lr: 0.001
+  num_workers: 0
+  seed: 0
+  train_epoch: 150
+  weight_decay: 0
+  end_epoch: 100
