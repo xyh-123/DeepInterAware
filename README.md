@@ -2,7 +2,7 @@
 
 ## DeepInterAware
 
- In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Relying solely on sequence data, it allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, offering the capability to predict binding or Neutralization,identify potential binding sites and predict binding free energy changes upon mutations. 
+ In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Relying solely on sequence data, it allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, offering the capability to predict binding or neutralization,identify potential binding sites and predict binding free energy changes upon mutations. 
 
 ![Our pipeline](figs/framework.png)
 
