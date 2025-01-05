@@ -157,7 +157,7 @@ class SiteDataset(Dataset):
         :param max_ab_length: HIV:271
         :param max_ag_length:  HIV:912
         """
-        map_index = pd.read_csv('/home/u/data/xyh/project/interface_aware/data/SAbDab/map_index.csv')
+        map_index = pd.read_csv(f'{dataFolder}/map_index.csv')
         self.map_index = map_index.iloc[index]
         self.index = index
         self.site_label = json.load(open(f'{dataFolder}/site_label.json', 'r'))
@@ -232,31 +232,22 @@ class TestSiteDataset(Dataset):
         return input_data,key
 
 class MuteDataset(Dataset):
-    def __init__(self, model_name,ab_name,index,dataset,data_path=f'{os.getcwd()}/data'):
+    def __init__(self, index,dataset,data_path=f'{os.getcwd()}/data'):
         """
         :param pair_data:
         :param max_ab_length: HIV:271 ag20:155
         :param max_ag_length:  HIV:912 ag20:460
         """
         path = f'{data_path}/{dataset}/'
-        self.model_name = model_name
-        if self.model_name in ['ESM2AbLang','ESM2Antiberty']:
-            self.wt_ag_fts = torch.load(f'{path}/wt_ag_ft.pt')[index]
-            self.wt_ab_fts = torch.load(f'{path}/wt_{ab_name}_ft.pt')[index]
+        self.wt_ag_token_fts = torch.load(f'{path}/wt_ag_token_ft.pt')[index]
+        self.wt_ab_token_fts = torch.load(f'{path}/wt_ab_token_ft.pt')[index]
+        self.wt_ag_masks = torch.load(f'{path}/wt_ag_masks.pt')[index]
+        self.wt_ab_masks = torch.load(f'{path}/wt_ab_masks.pt')[index]
 
-            self.mu_ag_fts = torch.load(f'{path}/wt_ag_ft.pt')[index]
-            self.mu_ab_fts = torch.load(f'{path}/wt_{ab_name}_ft.pt')[index]
-
-        else:
-            self.wt_ag_token_fts = torch.load(f'{path}/wt_ag_token_ft.pt')[index]
-            self.wt_ab_token_fts = torch.load(f'{path}/wt_ab_token_ft.pt')[index]
-            self.wt_ag_masks = torch.load(f'{path}/wt_ag_masks.pt')[index]
-            self.wt_ab_masks = torch.load(f'{path}/wt_ab_masks.pt')[index]
-
-            self.mu_ag_token_fts = torch.load(f'{path}/wt_ag_token_ft.pt')[index]
-            self.mu_ab_token_fts = torch.load(f'{path}/wt_ab_token_ft.pt')[index]
-            self.mu_ag_masks = torch.load(f'{path}/mu_ag_masks.pt')[index]
-            self.mu_ab_masks = torch.load(f'{path}/mu_ab_masks.pt')[index]
+        self.mu_ag_token_fts = torch.load(f'{path}/wt_ag_token_ft.pt')[index]
+        self.mu_ab_token_fts = torch.load(f'{path}/wt_ab_token_ft.pt')[index]
+        self.mu_ag_masks = torch.load(f'{path}/mu_ag_masks.pt')[index]
+        self.mu_ab_masks = torch.load(f'{path}/mu_ab_masks.pt')[index]
 
         self.label = torch.load(f'{path}/label.pt')[index]
         self.key_id = torch.load(f'{path}/key_id.pt')[index]
@@ -266,26 +257,18 @@ class MuteDataset(Dataset):
     def __getitem__(self, index):
         label = self.label[index]
         key_id = self.key_id[index]
-        if self.model_name in ['ESM2AbLang', 'ESM2Antiberty']:
-            wt_ag_ft = self.wt_ag_fts[index]
-            wt_ab_ft = self.wt_ab_fts[index]
 
-            mu_ag_ft = self.mu_ag_fts[index]
-            mu_ab_ft = self.mu_ab_fts[index]
-            wt_input_data = {'ag_ft': wt_ag_ft, 'ab_ft': wt_ab_ft}
-            mu_input_data = {'ag_ft': mu_ag_ft, 'ab_ft': mu_ab_ft}
-        else:
-            wt_ag_token_ft = self.wt_ag_token_fts[index]
-            wt_ab_token_ft = self.wt_ab_token_fts[index]
-            wt_ag_mask = self.wt_ag_masks[index]
-            wt_ab_mask = self.wt_ab_masks[index]
+        wt_ag_token_ft = self.wt_ag_token_fts[index]
+        wt_ab_token_ft = self.wt_ab_token_fts[index]
+        wt_ag_mask = self.wt_ag_masks[index]
+        wt_ab_mask = self.wt_ab_masks[index]
 
-            mu_ag_token_ft = self.mu_ag_token_fts[index]
-            mu_ab_token_ft = self.mu_ab_token_fts[index]
-            mu_ag_mask = self.mu_ag_masks[index]
-            mu_ab_mask = self.mu_ab_masks[index]
+        mu_ag_token_ft = self.mu_ag_token_fts[index]
+        mu_ab_token_ft = self.mu_ab_token_fts[index]
+        mu_ag_mask = self.mu_ag_masks[index]
+        mu_ab_mask = self.mu_ab_masks[index]
 
-            wt_input_data = {'ag_token_ft': wt_ag_token_ft, 'ab_token_ft': wt_ab_token_ft,'ag_mask': wt_ag_mask,'ab_mask': wt_ab_mask}
-            mu_input_data = {'ag_token_ft': mu_ag_token_ft, 'ab_token_ft': mu_ab_token_ft,'ag_mask': mu_ag_mask,'ab_mask': mu_ab_mask}
+        wt_input_data = {'ag_token_ft': wt_ag_token_ft, 'ab_token_ft': wt_ab_token_ft,'ag_mask': wt_ag_mask,'ab_mask': wt_ab_mask}
+        mu_input_data = {'ag_token_ft': mu_ag_token_ft, 'ab_token_ft': mu_ab_token_ft,'ag_mask': mu_ag_mask,'ab_mask': mu_ab_mask}
 
         return wt_input_data,mu_input_data,label,key_id
