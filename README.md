@@ -17,12 +17,12 @@
   - [Ag-Ab neutralization datasets](#Ag-Ab-neutralization-datasets)
   - [Binding free energy change dataset](#Binding-free-energy-change-dataset)
   - [Data process](#Data-process)
-    - [Extraction of amino acid feature](#extraction-of-amino-acid-feature)
+    - [Extraction of amino acid features](#extraction-of-amino-acid-features)
 
 - [Model Train](#Model-Train)
   - [Ag-Ag Binding Prediction](#Ag-Ag-Binding-Prediction)
   - [Ag-Ab Neutralization Prediction](#Ag-Ab-Neutralization-Prediction)
-  - [Binding Sites Identifcation](#Binding-Sites-Identifcation)
+  - [Binding Site Identifcation](#Binding-Site-Identifcation)
   - [Binding Free Energy Change Prediction](#Binding-Free-Energy-Change-Prediction)
   
 - [Model Test](#Moldel-Test)
@@ -97,9 +97,9 @@ To preprocess all datasets, please run,
 bash scripts/data_process.sh
 ```
 
-#### Extraction of amino acid feature
+#### Extraction of amino acid features
 
-Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . For encoded antibody features using AbLang, first, run pip install ablang to install the corresponding library. To extract the amino acid feature of antigen and antibody, please run,
+Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . For encoded antibody features using AbLang, first, run pip install ablang to install the corresponding library. To extract the amino acid features of antigens and antibodies, please run,
 
 ```sh
 python feature_encodr.py --data_path ./data/HIV --gpu 0
@@ -109,25 +109,25 @@ python feature_encodr.py --data_path ./data/HIV --gpu 0
 
 ### Ag-Ag Binding Prediction
 
-+ On the SAbDab dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
-
-```sh
-python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --kfold --gpu 0
-```
-
 + On the AVIDa-hIL6 dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
 
 ```sh
 python main.py --cfg ./configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --gpu 0
 ```
 
-+ For those baselines in our paper, we also evaluated their performance on these datasets (see Section 1.5 of the Supplementary Materials for implementation details), please run:
++ On the SAbDab dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
+
+```sh
+python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --kfold --gpu 0
+```
+
++ For those baselines in our paper, we also evaluated their performance on these datasets, please run:
 
 ```sh
 bash scripts/train_baseline.sh
 ```
 
-+ The performances of our method and these baselines on the SAbDab dataset and  AVIDa_hIL6 dataset are demonstrated in Table 1 in our paper.
++ The performances of our method and these baselines on the  AVIDa-hIL6 and SAbDab datasets are demonstrated in Table 1 in our paper.
 
 ### Ag-Ab Neutralization Prediction
 
@@ -139,17 +139,17 @@ python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ab_unseen
 python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen
 ```
 
-- On the CoV-AbDab dataset, we conducted  five-fold cross-validation to evaluate the transferability of DeepInterAware , please run:
+- On the CoV-AbDab dataset, we conducted  five independent experiments to evaluate the transferability of DeepInterAware, please run:
 
 ```sh
 python transfer.py  --config=configs/HIV.yml --unseen_task transfer
 ```
 
-- The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 1 in our paper and Supplementary Table 3, respectively.
+- The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 2 in our paper and Supplementary Table 1, respectively.
 
-### Binding Sites Identifcation
+### Binding Site Identifcation
 
-- On the SAbDab dataset, we conducted five-fold cross-validation to the performance of DeepInterAware in binding site identification , please run:
+- On the SAbDab dataset, we conducted five-fold cross-validation to evaluate the performance of DeepInterAware in binding site identification , please run:
 
 ```sh
 python site_train.py --lr 1e-3 --batch_size 32 --end_epoch 150 --epoch 300
@@ -157,7 +157,7 @@ python site_train.py --lr 1e-3 --batch_size 32 --end_epoch 150 --epoch 300
 
 ### Binding Free Energy Change Prediction
 
-On the AB-Bind/SKEMPI2 dataset, we conducted  ten-fold cross-validation to the performance of DeepInterAware in binding free energy changes, please run:
+On the AB-Bind/SKEMPI2 dataset, we conducted  ten-fold cross-validation to evaluate the performance of DeepInterAware in binding free energy change prediction, please run:
 
 ```sh
 python ddG_train.py --dataset AB-Bind --batch_size 32 --lr 5e-4
