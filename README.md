@@ -2,7 +2,7 @@
 
 ## DeepInterAware
 
- In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Relying solely on sequence data, it allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, offering the capability to identify potential binding sites and predict binding free energy changes due to mutations. 
+ In this paper, we propose **DeepInterAware** (deep interaction interface-aware network), a framework dynamically incorporating interaction interface information directly learned from sequence data, along with the inherent specificity information of the sequences. Relying solely on sequence data, it allows for a more profound insight into the underlying mechanisms of antigen-antibody interactions, offering the capability to predict binding or Neutralization,identify potential binding sites and predict binding free energy changes upon mutations. 
 
 ![Our pipeline](figs/framework.png)
 
@@ -22,11 +22,13 @@
 - [Model Train](#Model-Train)
   - [Ag-Ag Binding Prediction](#Ag-Ag-Binding-Prediction)
   - [Ag-Ab Neutralization Prediction](#Ag-Ab-Neutralization-Prediction)
-
+  - [Binding Sites Identifcation](#Binding-Sites-Identifcation)
+  - [Binding Free Energy Change Prediction](#Binding-Free-Energy-Change-Prediction)
+  
 - [Model Test](#Moldel-Test)
-  - [Binding/Neutralization Prediction](#Binding/Neutralization-Prediction)
-  - [Identifies Potential Binding Sites](#Identifies-Potential-Binding-Sites)
-  - [ Calculates the binding affinity changes](#Calculates-the-binding-affinity-changes)
+  - [Predict Binding or Neutralization](#Predict-Binding or-Neutralization)
+  - [Identify Potential Binding Sites](#Identify-Potential-Binding-Sites)
+  - [ Predict Binding Free Energy Changes](#Predict-Binding-Free-Energy-Changes)
 - [License](#License)
 - [Conflict of Interest](#Conflict-of-Interest)
 - [Cite Us](#cite-us)
@@ -89,11 +91,17 @@ conda activate aai
 
 All the processed dataset can be downloaded from [Link](https://drive.google.com/file/d/12uMgZLxpqhP70tPNp-K4LFksN4E0re30/view?usp=drive_link)  and stored in the data directory.
 
+To preprocess all datasets, please run,
+
+```sh
+bash scripts/data_process.sh
+```
+
 #### Extraction of amino acid feature
 
-Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . For encoded antibody features using AbLang, first run pip install ablang to install the corresponding library. To extract the amino acid feature of antigen and antibody, please run,
+Download the ESM2 [pretrain  model](https://huggingface.co/facebook/esm2_t12_35M_UR50D) put into the /networks/pretrained-ESM2/ . For encoded antibody features using AbLang, first, run pip install ablang to install the corresponding library. To extract the amino acid feature of antigen and antibody, please run,
 
-```python
+```sh
 python feature_encodr.py --data_path ./data/HIV --gpu 0
 ```
 
@@ -103,19 +111,19 @@ python feature_encodr.py --data_path ./data/HIV --gpu 0
 
 + On the SAbDab dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
 
-```plain
+```sh
 python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --kfold --gpu 0
 ```
 
 + On the AVIDa-hIL6 dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
 
-```plain
+```sh
 python main.py --cfg ./configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --gpu 0
 ```
 
 + For those baselines in our paper, we also evaluated their performance on these datasets (see Section 1.5 of the Supplementary Materials for implementation details), please run:
 
-```plain
+```sh
 bash scripts/train_baseline.sh
 ```
 
@@ -125,23 +133,39 @@ bash scripts/train_baseline.sh
 
 - On the HIV dataset, we conducted  the five independent experiments to evaluate the DeepInterAware under the Ab Unseen, Ag Unseen, and Ag&Ab Unseen scenarios , please run:
 
-```
+```sh
 python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task unseen
 python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ab_unseen
 python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen
 ```
 
-- On the CoV-AbDab dataset, we conducted  the 5-fold cross-validation to evaluate the transferability of DeepInterAware , please run:
+- On the CoV-AbDab dataset, we conducted  five-fold cross-validation to evaluate the transferability of DeepInterAware , please run:
 
-```
+```sh
 python transfer.py  --config=configs/HIV.yml --unseen_task transfer
 ```
 
 - The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 1 in our paper and Supplementary Table 3, respectively.
 
+### Binding Sites Identifcation
+
+- On the SAbDab dataset, we conducted five-fold cross-validation to the performance of DeepInterAware in binding site identification , please run:
+
+```sh
+python site_train.py --lr 1e-3 --batch_size 32 --end_epoch 150 --epoch 300
+```
+
+### Binding Free Energy Change Prediction
+
+On the AB-Bind/SKEMPI2 dataset, we conducted  ten-fold cross-validation to the performance of DeepInterAware in binding free energy changes, please run:
+
+```sh
+python ddG_train.py --dataset AB-Bind --batch_size 32 --lr 5e-4
+```
+
 ## Model Test
 
-### Binding/Neutralization Prediction
+### Predict Binding or Neutralization
 
 ```shell
 python usage.py --task binding --pair_file ./data/example/binding_pair.csv --gpu 0 --model_path ./save_models/
@@ -157,13 +181,13 @@ python usage.py --task neutralization --pair_file ./data/example/hiv_neutralizat
 python usage.py --task binding_site --pair_file ./data/example/binding_site_pair.csv --gpu 0 --model_path ./save_models/
 ```
 
-### Predict the binding affinity changes
+### Predict Binding Free Energy Changes
 
 ![affinity_changes](figs/affinity_changes.png)
 
 + The residue mutations of antigen and antibody sequences can significantly alter the AAI. To thoroughly evaluate the performance of DeepInterAware in identifying the efficacy of Ag-Ab mutants, we adopt Ag-Ab complexes and mutants as well as experimentally determined changes in binding free energies:
 
-```plain
+```sh
 python usage.py --task ddG --wt ./data/example/wt.csv --mu ./data/example/mu.csv --gpu 0 --model_path ./save_models/
 ```
 
@@ -183,7 +207,7 @@ Feel free to cite this work if you find it useful to you!
 @article{DeepInterAware,
     title={DeepInterAware: deep interaction interface-aware network for improving antigen-antibody interaction prediction from sequence data},
     author={Yuhang Xia, Zhiwei Wang,Feng Huang,Zhankun Xiong,Yongkang Wang, Minyao Qiu, Wen Zhang},
-    year={2024},
+    year={2025},
 }
 ```
 
