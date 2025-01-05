@@ -26,7 +26,7 @@
   - [Binding Free Energy Change Prediction](#Binding-Free-Energy-Change-Prediction)
   
 - [Model Test](#Moldel-Test)
-  - [Predict Binding or Neutralization](#Predict-Binding or-Neutralization)
+  - [Predict Binding or Neutralization](#Predict-Binding-or-Neutralization)
   - [Identify Potential Binding Sites](#Identify-Potential-Binding-Sites)
   - [ Predict Binding Free Energy Changes](#Predict-Binding-Free-Energy-Changes)
 - [License](#License)
