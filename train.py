@@ -477,7 +477,7 @@ class DeepInterAwareTrainer(ClsBaseTrainer):
 
         return res
     
-class KFoldMultiSIPTrainer(object):
+class Trainer(object):
     def __init__(self, trainer_parameter):
         # self.start_epoch = trainer_parameter.start_epoch
         self.end_epoch = trainer_parameter.end_epoch
