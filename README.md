@@ -71,21 +71,21 @@ conda activate aai
 
 ### Ag-Ab binding datasets
 
-[AVIDa-hIL6]() is a comprehensive Ag-Ab binding sequence dataset that includes the wild-type protein and 30 mutates of the human interleukin-6 (IL-6), alongside 38,599 VHH antibodies. To refine the dataset for our study, we employed ANARCI to extract the CDR loops from the antibody sequences and finally obtained 10,178 unique binding pairs and 315,708 non-binding pairs.
+[AVIDa-hIL6](https://cognanous.com/datasets/avida-hil6) is a comprehensive Ag-Ab binding sequence dataset for predicting AAIs in the variable domain of heavy chain antibodies (VHHs), featuring the wild-type IL-6 protein and its 30 mutants as antigens. To refine the dataset for our study, we employed ANARCI to extract the CDR loops from the antibody sequences and finally obtained 10,178 binding pairs and 315,708 non-binding pairs.
 
-[SAbDab](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/) database  is a comprehensive compilation of all accessible Ag-Ab complexes, meticulously curated from the Protein Data Bank (PDB).   To adapt to the binding prediction task in our paper, we collected the complexes with antigen sequences containing more than 50 residues, and filtered out duplicates with the antibody CDR loops, arriving at a refined set of 1,513 unique pairs as the SAbDab dataset in our paper.
+[SAbDab](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/) database  is a comprehensive compilation of all accessible Ag-Ab complexes, meticulously curated from the Protein Data Bank (PDB).  To adapt to the binding prediction task in our paper, we collected the complexes with antigen sequences containing more than 50 residues, and filtered out duplicates with the antibody CDR loops, arriving at a refined set of 1,513 binding pairs as the SAbDab dataset in our paper.
 
 ### Ag-Ab neutralization datasets
 
-[HIV](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/) sequence database comprises neutralization antibodies related to the Human Immunodeficiency Virus (HIV). We meticulously filtered out Ag-Ab pairs that exhibited sequence homology levels exceeding 90% for both the antigen and the antibody components, and curated the HIV sequence dataset encompasses 24,907 neutralization pairs with sequences and 26,480 non-neutralization pairs.
+[HIV](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/) sequence database comprises neutralization antibodies related to the Human Immunodeficiency Virus (HIV). We meticulously filtered out Ag-Ab pairs that exhibited sequence homology levels exceeding 90% for both the antigens and the antibodies, and curated the HIV sequence dataset encompasses 24,907 neutralization pairs with sequences and 26,480 non-neutralization pairs.
 
 [CoV-AbDab](https://opig.stats.ox.ac.uk/webapps/covabdab/) database offers detailed information regarding conventional antibodies and nanobodies capable of binding to various coronaviruses. We collected the Ag–Ab neutralization and non-neutralization pairs and antibody sequences from the CoV-AbDab database, and finally obtained the CoV-AbDab dataset consisting of 5,486 neutralization pairs and 9,110 non-neutralization pairs with sequences. 
 
 ### Binding free energy change dataset
 
-[AB-Bind](https://github.com/sarahsirin/AB-Bind-Database) database  includes 1,101 mutants with experimentally determined changes in binding free energies (<font style="color:black;">△△</font>G) across 32 Ag-Ab complexes. We screened the Ag-Ab mutants annotated with light and heavy chains, consisting of 654 unique mutants.
+[AB-Bind](https://github.com/sarahsirin/AB-Bind-Database) database  includes 1,101 mutants with experimentally determined changes in binding free energies (<font style="color:black;">△△</font>G) across 32 Ag-Ab complexes. We screened the Ag-Ab mutants annotated with light and heavy chains, consisting of 654 unique mutants. 
 
-[SKEMPI2](https://life.bsc.es/pid/skempi2/) database offers changes in protein-protein binding  energy, kinetics, and thermodynamics upon mutation. We screened Ag-Ab mutants, consisting of 1,021 unique mutants, as the SKEMPI2 dataset.
+[SKEMPI2](https://life.bsc.es/pid/skempi2/) database  provides data on changes in protein-protein binding energy, kinetics, and thermodynamics upon mutations. As we did on the AB-Bind, we screened Ag-Ab mutants annotated with both light and heavy chains, resulting in 1,021 mutants.
 
 ### Data process
 
@@ -118,10 +118,10 @@ python main.py --cfg ./configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --gpu 0
 + On the SAbDab dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
 
 ```sh
-python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --kfold --gpu 0
+python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --gpu 0
 ```
 
-+ For those baselines in our paper, we also evaluated their performance on these datasets, please run:
++ For baselines in our paper, we also evaluated their performance on these datasets, please run:
 
 ```sh
 bash scripts/train_baseline.sh
@@ -145,7 +145,7 @@ python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen
 python transfer.py  --config=configs/HIV.yml --unseen_task transfer
 ```
 
-- The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 2 in our paper and Supplementary Table 1, respectively.
+- The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 2 in our paper and Table 1 in Supplementary , respectively.
 
 ### Binding Site Identifcation
 
@@ -157,7 +157,7 @@ python site_train.py --lr 1e-3 --batch_size 32 --end_epoch 150 --epoch 300
 
 ### Binding Free Energy Change Prediction
 
-On the AB-Bind/SKEMPI2 dataset, we conducted  ten-fold cross-validation to evaluate the performance of DeepInterAware in binding free energy change prediction, please run:
+On the AB-Bind and SKEMPI2 datasets, we conducted  ten-fold cross-validation to evaluate the performance of DeepInterAware in binding free energy change prediction, please run:
 
 ```sh
 python ddG_train.py --dataset AB-Bind --batch_size 32 --lr 5e-4
@@ -175,7 +175,7 @@ python usage.py --task neutralization --pair_file ./data/example/hiv_neutralizat
 
 ### Identify Potential Binding Sites
 
-+ In addition to  its primary benefits in Ag-Ab interaction prediction, our model can learn some structural information for the sequences and lead to superior performances, and we try to validate this point by testing the capability of our method in identifying potential binding sites:
++ In addition to  its primary benefits in AAI prediction, our model can learn some structural information for the sequences, and we try to validate this point by testing the capability of our method in identifying potential binding sites:
 
 ```shell
 python usage.py --task binding_site --pair_file ./data/example/binding_site_pair.csv --gpu 0 --model_path ./save_models/
