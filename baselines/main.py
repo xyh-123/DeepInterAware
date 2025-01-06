@@ -26,7 +26,7 @@ parser.add_argument('--model_name', default='DeeppAAI', type=str, metavar='S',he
 parser.add_argument('--unseen_task', default='ab_unseen' , type=str, metavar='S',choices=['ab_unseen','ag_unseen','unseen','transfer'],
                     help='Only for HIV dataset cls or reg')
 parser.add_argument('--h_dim', default=512, type=int, metavar='S',help='dataset')
-parser.add_argument('--kfold', action='store_true')
+# parser.add_argument('--kfold', action='store_true')
 parser.add_argument('--metric_type', default='roc_auc', type=str, metavar='S',help='dataset')
 parser.add_argument('--save_best', action='store_false')
 args=parser.parse_args()
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         cfg.set.seed = seed
         dataFolder = f'{args.data}/{cfg.set.dataset}/'
 
-        if not args.kfold:
+        if cfg.set.dataset != 'SAbDab':
             train_dataset, val_dataset, unseen_dataset= return_dataset(cfg,dataFolder)
             # scheduler = CosineAnnealingLR(opt, T_max=50, eta_min=1e-5)
         else:
