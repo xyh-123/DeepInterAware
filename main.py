@@ -10,7 +10,7 @@ import warnings, os
 
 from utools.comm_utils import set_seed,mkdir
 from munch import Munch
-from train import KFoldMultiSIPTrainer
+from train import Trainer
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
 def return_sampler(dataset):
@@ -51,7 +51,7 @@ parser.add_argument('--unseen_task', default='ab_unseen' , type=str, metavar='S'
                     help='Only for HIV dataset cls or reg')
 parser.add_argument('--phy', action='store_true')
 parser.add_argument('--save_best', action='store_true')
-parser.add_argument('--kfold', action='store_true')
+# parser.add_argument('--kfold', action='store_true')
 parser.add_argument('--use_bn', action='store_false')
 parser.add_argument('--h_dim', default=512, type=int, metavar='S',help='dataset')
 parser.add_argument('--metric_type', default='roc_auc', type=str, metavar='S',help='dataset')
@@ -122,8 +122,8 @@ if __name__ == '__main__':
         # opt = Lookahead(optimizer_inner, k=5, alpha=0.5)
 
 
-
-        if not args.kfold:
+        if cfg.set.dataset != 'SAbDab':
+        # if not args.kfold:
             train_dataset, val_dataset, unseen_dataset= return_dataset(cfg,dataFolder)
             # scheduler = CosineAnnealingLR(opt, T_max=50, eta_min=1e-5)
         else:
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         trainer_parameter.val_dataloader = val_dataloader
         trainer_parameter.unseen_dataloader = unseen_dataloader
         # trainer = SMAICFTrainer(trainer_parameter)
-        trainer = KFoldMultiSIPTrainer(trainer_parameter)
+        trainer = Trainer(trainer_parameter)
         print()
         print(f"Directory for saving result: {trainer.save_file_path}")
         result = trainer.train()
