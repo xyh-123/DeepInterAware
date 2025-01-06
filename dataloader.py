@@ -38,7 +38,7 @@ def return_dataset(cfg,dataFolder):
         dataset={
             'HIV':load_dataset,
             'AVIDa_hIL6':load_dataset,
-            'sars_cov2/neutralising':load_dataset,
+            'CoVAbDab':load_dataset,
         }
         #
         return dataset[cfg.set.dataset](cfg, dataFolder)

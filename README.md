@@ -142,7 +142,7 @@ python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen --b
 - On the CoV-AbDab dataset, we conducted  five independent experiments to evaluate the transferability of DeepInterAware, please run:
 
 ```sh
-python transfer.py  --config=configs/HIV.yml --unseen_task transfer --batch_size 32
+python transfer.py  --config=configs/HIV.yml  --batch_size 32
 ```
 
 - The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 2 in our paper and Table 1 in Supplementary , respectively.

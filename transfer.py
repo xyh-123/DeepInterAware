@@ -22,8 +22,8 @@ def load_finetune_dataset(cfg,seed):
     dataFolder = f'{os.getcwd()}/data/CoVAbDab/'
     # antibody = pd.read_csv(dataFolder+'antibody.csv')
     # antigen = pd.read_csv(dataFolder+'antigen.csv')
-    train_data = pd.read_csv(dataFolder+f'transfer/finetune_train.csv')
-    test_data = pd.read_csv(dataFolder+f'transfer/finetune_test.csv')
+    train_data = pd.read_csv(dataFolder+f'finetune_train.csv')
+    test_data = pd.read_csv(dataFolder+f'finetune_test.csv')
 
     train_dataset=PairDataset(train_data,dataFolder,cfg)
     test_dataset=PairDataset(test_data,dataFolder,cfg)
@@ -272,59 +272,59 @@ if __name__ == '__main__':
         model = model.to(device)
         scheduler = CosineAnnealingLR(opt, T_max=50, eta_min=1e-5)
 
-        if not os.path.exists(args.model_path+'HIV.pth'):
-
-            cfg.solver.seed = seed
-            train_dataset, val_dataset, unseen_dataset= return_dataset(cfg, dataFolder)
-            params = {'batch_size': args.batch_size, 'shuffle': True, 'num_workers': cfg.solver.num_workers,
-                      'drop_last': True}
-
-
-
-            train_dataloader = DataLoader(train_dataset, sampler=None, **params)
-            params['shuffle'] = True
-            params['drop_last'] = False
-            val_dataloader = DataLoader(val_dataset, **params)
-            if unseen_dataset != None:
-                unseen_dataloader = DataLoader(unseen_dataset, sampler=None, **params)
-            else:
-                unseen_dataloader = None
-
-
-            trainer_parameter = Munch(
-                device=device,
-                current_epoch=0,
-                save_best=args.save_best,
-                metric_type=args.metric_type,
-                sampler=False,
-                # start_epoch=args.start_epoch,
-                end_epoch=args.end_epoch,
-                model=model,
-                opt=opt,
-                scheduler=scheduler,
-                cfg=cfg,
-                # cfg=cfg
-            )
-            trainer_parameter.train_dataloader = train_dataloader
-            trainer_parameter.val_dataloader = val_dataloader
-            trainer_parameter.unseen_dataloader = unseen_dataloader
-
-            trainer = DeepInterAwareTrainer(trainer_parameter)
-            print()
-            print(f"Directory for saving result: {trainer.save_file_path}")
-            result = trainer.train()
-
-            with open(os.path.join(trainer.save_file_path, "model_architecture.txt"), "w") as wf:
-                wf.write(str(model))
+        # if not os.path.exists(args.model_path+'HIV.pth'):
+        #
+        #     cfg.solver.seed = seed
+        #     train_dataset, val_dataset, unseen_dataset= return_dataset(cfg, dataFolder)
+        #     params = {'batch_size': args.batch_size, 'shuffle': True, 'num_workers': cfg.solver.num_workers,
+        #               'drop_last': True}
+        #
+        #
+        #
+        #     train_dataloader = DataLoader(train_dataset, sampler=None, **params)
+        #     params['shuffle'] = True
+        #     params['drop_last'] = False
+        #     val_dataloader = DataLoader(val_dataset, **params)
+        #     if unseen_dataset != None:
+        #         unseen_dataloader = DataLoader(unseen_dataset, sampler=None, **params)
+        #     else:
+        #         unseen_dataloader = None
+        #
+        #
+        #     trainer_parameter = Munch(
+        #         device=device,
+        #         current_epoch=0,
+        #         save_best=args.save_best,
+        #         metric_type=args.metric_type,
+        #         sampler=False,
+        #         # start_epoch=args.start_epoch,
+        #         end_epoch=args.end_epoch,
+        #         model=model,
+        #         opt=opt,
+        #         scheduler=scheduler,
+        #         cfg=cfg,
+        #         # cfg=cfg
+        #     )
+        #     trainer_parameter.train_dataloader = train_dataloader
+        #     trainer_parameter.val_dataloader = val_dataloader
+        #     trainer_parameter.unseen_dataloader = unseen_dataloader
+        #
+        #     trainer = DeepInterAwareTrainer(trainer_parameter)
+        #     print()
+        #     print(f"Directory for saving result: {trainer.save_file_path}")
+        #     result = trainer.train()
+        #
+        #     with open(os.path.join(trainer.save_file_path, "model_architecture.txt"), "w") as wf:
+        #         wf.write(str(model))
 
         print("Finetune on the CoVAbDab dataset")
 
         train_loader, test_loader = load_finetune_dataset(cfg,seed)
-        state_dict = torch.load(args.model_path+'best_model.pth')
+        state_dict = torch.load(args.model_path+'HIV.pth')
 
         # model = DeepInterAware(cfg)
         # print(state_dict['model_state_dict'].keys())
-        model.load_state_dict(state_dict['model_state_dict'])
+        model.load_state_dict(state_dict)
         if args.freeze:
             for name, param in model.named_parameters():
                 if 'out_linear2' not in name :
