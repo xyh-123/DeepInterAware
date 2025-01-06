@@ -112,13 +112,13 @@ python feature_encodr.py --data_path ./data/HIV --gpu 0
 + On the AVIDa-hIL6 dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
 
 ```sh
-python main.py --cfg ./configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --gpu 0
+python main.py --cfg ./configs/AVIDa_hIL6.yml --dataset AVIDa_hIL6 --gpu 0 --batch_size 512
 ```
 
 + On the SAbDab dataset, we conducted  five independent experiments to evaluate the DeepInterAware , please run:
 
 ```sh
-python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --gpu 0
+python main.py --cfg ./configs/SAbDab.yml --dataset SAbDab --gpu 0 --batch_size 128
 ```
 
 + For baselines in our paper, we also evaluated their performance on these datasets, please run:
@@ -134,15 +134,15 @@ bash scripts/train_baseline.sh
 - On the HIV dataset, we conducted  the five independent experiments to evaluate the DeepInterAware under the Ab Unseen, Ag Unseen, and Ag&Ab Unseen scenarios , please run:
 
 ```sh
-python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task unseen
-python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ab_unseen
-python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen
+python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task unseen --batch_size 256
+python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ab_unseen --batch_size 256
+python main.py --cfg ./configs/HIV.yml --dataset HIV --unseen_task ag_unseen --batch_size 256
 ```
 
 - On the CoV-AbDab dataset, we conducted  five independent experiments to evaluate the transferability of DeepInterAware, please run:
 
 ```sh
-python transfer.py  --config=configs/HIV.yml --unseen_task transfer
+python transfer.py  --config=configs/HIV.yml --unseen_task transfer --batch_size 32
 ```
 
 - The performances of our method and these baselines on the HIV dataset and  CoV-AbDab dataset are demonstrated in Table 2 in our paper and Table 1 in Supplementary , respectively.

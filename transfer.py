@@ -249,6 +249,7 @@ if __name__ == '__main__':
     parser.add_argument('--end_epoch', default=30, type=int, metavar='S', help='dataset')
     parser.add_argument('--save_best', action='store_true')
     parser.add_argument('--metric_type', default='roc_auc', type=str, metavar='S', help='dataset')
+    parser.add_argument('--batch_size', default=32, type=int, metavar='S', help='dataset')
 
     args = parser.parse_args()
     # model_name =args.model_name
@@ -275,7 +276,7 @@ if __name__ == '__main__':
 
             cfg.solver.seed = seed
             train_dataset, val_dataset, unseen_dataset= return_dataset(cfg, dataFolder)
-            params = {'batch_size': cfg.solver.batch_size, 'shuffle': True, 'num_workers': cfg.solver.num_workers,
+            params = {'batch_size': args.batch_size, 'shuffle': True, 'num_workers': cfg.solver.num_workers,
                       'drop_last': True}
 
 
