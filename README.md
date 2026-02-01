@@ -6,6 +6,9 @@
 
 ![Our pipeline](figs/framework.png)
 
+This repository has been deprecated and is no longer maintained.
+The project has moved to a new location: https://github.com/BioMedicalBigDataMiningLab/DeepInterAware
+
 ## Table of contents
 
 - [Dependencies](#Dependencies)
